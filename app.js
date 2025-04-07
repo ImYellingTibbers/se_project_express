@@ -12,7 +12,12 @@ mongoose
   })
   .catch(console.error);
 
+app.use(express.json())
   app.use("/", indexRouter);
+
+app.use((req, res) => {
+  res.status(404).send({ message: "Requested resource not found" });
+});
 
 app.listen(PORT, () => {
   console.log(`listening on port ${PORT}`);
