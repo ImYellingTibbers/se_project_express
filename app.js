@@ -12,8 +12,16 @@ mongoose
   })
   .catch(console.error);
 
-app.use(express.json())
-  app.use("/", indexRouter);
+app.use(express.json());
+
+app.use((req, res, next) => {
+  req.user = {
+    _id: "67f559cbabecc4b18c606bea",
+  };
+  next();
+});
+
+app.use("/", indexRouter);
 
 app.use((req, res) => {
   res.status(404).send({ message: "Requested resource not found" });
