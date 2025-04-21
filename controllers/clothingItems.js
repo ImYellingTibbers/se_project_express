@@ -38,9 +38,18 @@ const createClothingItem = (req, res) => {
 
 const deleteClothingItem = (req, res) => {
   const { itemId } = req.params;
-  ClothingItem.findByIdAndDelete(itemId)
+  ClothingItem.findById(itemId)
     .orFail()
-    .then((item) => res.status(OK).send(item))
+    .then((item) => {
+      if (item.owner.toString() !== req.user._id) {
+        return res
+          .status(403)
+          .send({ message: "You do not have permission to delete this item." });
+      }
+      return ClothingItem.findByIdAndDelete(itemId).then((deletedItem) =>
+        res.status(OK).send(deletedItem)
+      );
+    })
     .catch((err) => {
       console.error(err);
       if (err.name === "CastError") {
