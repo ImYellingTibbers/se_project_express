@@ -13,8 +13,7 @@ router.use("/items", clothingItemRouter);
 router.use("/users", userRouter);
 
 router.use((req, res) => {
-  console.log("DEBUG – NOT_FOUND value:", NOT_FOUND)
-  res.status(NOT_FOUND).send({ message: "Requested resource not found" });
+  res.status(404).send({ message: "Requested resource not found" });
 });
 
 module.exports = {
