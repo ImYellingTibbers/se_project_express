@@ -6,8 +6,6 @@ Frontend: https://wtwr.cylone.net
 
 Backend: https://api.wtwr.cylone.net
 
-TEST
-
 ---
 
 ## 🚀 Features
