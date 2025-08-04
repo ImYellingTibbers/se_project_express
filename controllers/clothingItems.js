@@ -5,31 +5,30 @@ const BadRequestError = require("../errors/BadRequestError");
 const ForbiddenError = require("../errors/ForbiddenError");
 const NotFoundError = require("../errors/NotFoundError");
 
-const getClothingItems = (req, res, next) => {
-  ClothingItem.find({})
+const getClothingItems = (req, res, next) => ClothingItem.find({})
     .then((items) => res.status(OK).send(items))
     .catch((err) => {
       next(err);
     });
-};
 
 const createClothingItem = (req, res, next) => {
   const { name, weather, imageUrl } = req.body;
   const owner = req.user._id;
 
-  ClothingItem.create({ name, weather, imageUrl, owner })
+  return ClothingItem.create({ name, weather, imageUrl, owner })
     .then((item) => res.status(CREATED).send(item))
     .catch((err) => {
       if (err.name === "ValidationError") {
         return next(new BadRequestError(err.message));
       }
-      next(err);
+      return next(err);
     });
 };
 
 const deleteClothingItem = (req, res, next) => {
   const { itemId } = req.params;
-  ClothingItem.findById(itemId)
+
+  return ClothingItem.findById(itemId)
     .orFail()
     .then((item) => {
       if (item.owner.toString() !== req.user._id) {
@@ -48,13 +47,14 @@ const deleteClothingItem = (req, res, next) => {
       if (err.name === "DocumentNotFoundError") {
         return next(new NotFoundError(err.message));
       }
-      next(err);
+      return next(err);
     });
 };
 
 const likeItem = (req, res, next) => {
   const { itemId } = req.params;
-  ClothingItem.findByIdAndUpdate(
+
+  return ClothingItem.findByIdAndUpdate(
     itemId,
     { $addToSet: { likes: req.user._id } },
     { new: true }
@@ -68,13 +68,14 @@ const likeItem = (req, res, next) => {
       if (err.name === "DocumentNotFoundError") {
         return next(new NotFoundError(err.message));
       }
-      next(err);
+      return next(err);
     });
 };
 
 const unlikeItem = (req, res, next) => {
   const { itemId } = req.params;
-  ClothingItem.findByIdAndUpdate(
+
+  return ClothingItem.findByIdAndUpdate(
     itemId,
     { $pull: { likes: req.user._id } },
     { new: true }
@@ -88,7 +89,7 @@ const unlikeItem = (req, res, next) => {
       if (err.name === "DocumentNotFoundError") {
         return next(new NotFoundError(err.message));
       }
-      next(err);
+      return next(err);
     });
 };
 
